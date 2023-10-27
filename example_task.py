@@ -93,7 +93,7 @@ class VisualSnowSim(moderngl_window.WindowConfig):
         self.outfile_name = "sampledata-" + self.part_id + "-" + self.session_id + ".csv"
         with open(self.outfile_name, 'w', newline='') as file:
             writer = csv.writer(file)
-            writer.writerows(["Participant ID", "Session ID", "Noisetype", "Brightness", "Cutoff", "Size"])
+            writer.writerow(["Participant ID", "Session ID", "Noisetype", "Brightness", "Cutoff", "Size"])
         
 
         self.scheduler = Scheduler(self.timer)
@@ -166,7 +166,7 @@ class VisualSnowSim(moderngl_window.WindowConfig):
 
                 with open(self.outfile_name, 'a', newline='') as file:
                     writer = csv.writer(file)
-                    writer.writerows([self.part_id, self.session_id, str(self.prog['u_noisetype'].value), str(self.prog['u_bright'].value), str(self.prog['u_cutoff'].value), str(self.prog['u_size'].value)])
+                    writer.writerow([self.part_id, self.session_id, str(self.prog['u_noisetype'].value), str(self.prog['u_bright'].value), str(self.prog['u_cutoff'].value), str(self.prog['u_size'].value)])
 
                 self.prog['u_bright'].value = 0.0
                 self.samples_count = self.samples_count + 1
