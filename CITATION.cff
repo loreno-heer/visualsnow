@@ -1,0 +1,9 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Heer"
+  given-names: "Loreno"
+  orcid: "https://orcid.org/0000-0001-7424-8912"
+title: "Visual Snow Simulator"
+url: "https://github.com/loreno-heer/visualsnow"
+license: GPL-3.0
