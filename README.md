@@ -4,8 +4,9 @@ Programs to simulate the appearance of visual snow
 
 # install instructions
 
-- unzip all files in some directory
+- unzip all files in some directory (for some reason the git submodule lygia is empty, this needs to be added manually)
 - install python 3.8+ and pip
+- on windows you might need to install the microsoft build tools / visual c++
 - run:
 ```
 pip install moderngl
