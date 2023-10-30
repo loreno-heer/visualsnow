@@ -29,3 +29,8 @@ Use the <kbd>T</kbd> and <kbd>U</kbd> keys to change the type of noise (resets t
 ## example_task
 
 This is a simple app that displays a black screen and gradually adds noise. Press space whenever noise appears to be visible. Results are logged in a CSV file.
+
+
+## jspsych version
+
+This can be tried out here: https://proych8kyx.cognition.run/
