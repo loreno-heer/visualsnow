@@ -182,7 +182,9 @@ requestAnimationFrame(render);
 
 
 
-const jsPsych = initJsPsych();
+const jsPsych = initJsPsych({
+
+});
 var timeline = [];
 
 var enter_fullscreen = {
@@ -226,7 +228,9 @@ var exit_fullscreen = {
 }
 timeline.push(exit_fullscreen);
 
+
 jsPsych.run(timeline);
+
 
 </script>
 
