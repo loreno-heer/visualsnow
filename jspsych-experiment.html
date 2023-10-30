@@ -81,7 +81,8 @@ float random(in vec4 pos) {
     void main() {
 	  vec4 color = vec4(vec3(0.0), 1.0);
       color += random(vec3(gl_FragCoord.xy / u_resolution * 5.0,u_time)); 
-	  color = (step(u_cut,color)/u_cut)*u_bright;
+	  //color = (color* step(u_cut,color) - u_cut)/(1.0-u_cut)*u_bright;
+	  color = step(u_cut,color)*(color - u_cut)/(1.0-u_cut)*u_bright;
 	  outColor = vec4(color.xyz,1.0);
     }
   `;
