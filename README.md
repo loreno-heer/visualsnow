@@ -34,3 +34,7 @@ This is a simple app that displays a black screen and gradually adds noise. Pres
 ## jspsych version
 
 This can be tried out here: https://proych8kyx.cognition.run/
+
+## webgl noise generator
+
+the webgl noise demonstration can be tried out here: https://zesty-heliotrope-2f2c6f.netlify.app/
