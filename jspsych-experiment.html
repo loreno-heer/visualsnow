@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<!--check for more details about centroid: https://www.opengl.org/pipeline/article/vol003_6/-->
+<html lang="en">
+<head>
+    <title>WebGL 2 Noise</title>
+    <meta charset="utf-8">
+</head>
+
+
+<body style="margin: 0; overflow: hidden;"><canvas id="canvas"></canvas>
+<!--
+for most samples webgl-utils only provides shader compiling/linking and
+canvas resizing because why clutter the examples with code that's the same in every sample.
+See https://webglfundamentals.org/webgl/lessons/webgl-boilerplate.html
+and https://webglfundamentals.org/webgl/lessons/webgl-resizing-the-canvas.html
+for webgl-utils, m3, m4, and webgl-lessons-ui.
+-->
+<script src="https://webgl2fundamentals.org/webgl/resources/webgl-utils.js"></script>
+
+<script src="https://unpkg.com/jspsych@7.3.3"></script>
+<script src="https://unpkg.com/@jspsych/plugin-fullscreen@1.2.0"></script>
+<script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.2"></script>
+
+<script src="https://unpkg.com/@jspsych/plugin-canvas-keyboard-response@1.1.2"></script>
+
+
+<script>
+
+"use strict";
+
+function snow(canvas) {
+  // Get A WebGL context
+  /** @type {HTMLCanvasElement} */
+  //const canvas = document.querySelector("#canvas");
+  //const gl = canvas.getContext("webgl2");
+  const gl = canvas.getContext("webgl2");
+  if (!gl) {
+    return;
+  }
+gl.viewport(0, 0, canvas.width = window.innerWidth, canvas.height = window.innerHeight);
+
+  const vs = `#version 300 es
+    // an attribute is an input (in) to a vertex shader.
+    // It will receive data from a buffer
+    in vec4 a_position;
+
+    // all shaders have a main function
+    void main() {
+
+      // gl_Position is a special variable a vertex shader
+      // is responsible for setting
+      gl_Position = a_position;
+    }
+  `;
+
+  const fs = `#version 300 es
+    precision highp float;
+
+    // we need to declare an output for the fragment shader
+    out vec4 outColor;
+	
+	uniform vec2 u_resolution;
+	
+	uniform float u_time;
+    uniform float u_bright;	
+    uniform float u_cut;
+
+float random(in vec3 pos) {
+
+    return fract(sin(dot(pos.xyz, vec3(70.9898, 78.233, 32.4355))) * 43758.5453123);
+
+}
+
+float random(in vec4 pos) {
+
+    float dot_product = dot(pos, vec4(12.9898,78.233,45.164,94.673));
+    return fract(sin(dot_product) * 43758.5453);
+
+}
+
+    void main() {
+	  vec4 color = vec4(vec3(0.0), 1.0);
+      color += random(vec3(gl_FragCoord.xy / u_resolution * 5.0,u_time)); 
+	  color = (step(u_cut,color)/u_cut)*u_bright;
+	  outColor = vec4(color.xyz,1.0);
+    }
+  `;
+
+  // setup GLSL program
+  const program = webglUtils.createProgramFromSources(gl, [vs, fs]);
+
+  // look up where the vertex data needs to go.
+  const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+
+  // Create a vertex array object (attribute state)
+  const vao = gl.createVertexArray();
+
+  // and make it the one we're currently working with
+  gl.bindVertexArray(vao);
+
+  // Create a buffer to put three 2d clip space points in
+  const positionBuffer = gl.createBuffer();
+
+  // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+
+  // fill it with a 2 triangles that cover clip space
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    -1, -1,  // first triangle
+     1, -1,
+    -1,  1,
+    -1,  1,  // second triangle
+     1, -1,
+     1,  1,
+  ]), gl.STATIC_DRAW);
+
+  // Turn on the attribute
+  gl.enableVertexAttribArray(positionAttributeLocation);
+
+  // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
+  gl.vertexAttribPointer(
+      positionAttributeLocation,
+      2,          // 2 components per iteration
+      gl.FLOAT,   // the data is 32bit floats
+      false,      // don't normalize the data
+      0,          // 0 = move forward size * sizeof(type) each iteration to get the next position
+      0,          // start at the beginning of the buffer
+  );
+  
+  var start = Date.now();
+        program.createUniform = function (type, name) {
+        var location = gl.getUniformLocation(program, name);
+        return function (v1, v2, v3, v4) {
+            gl['uniform' + type](location, v1, v2, v3, v4);
+        }
+    };
+	
+	
+	  gl.useProgram(program);
+  //const u_timeloc = gl.getUniformLocation(program, "u_time");
+  //gl.uniformf(u_timeloc,time);
+  var tm = program.createUniform('1f', 'u_time');
+  var cut = program.createUniform('1f', 'u_cut');	
+  var bright  = program.createUniform('1f', 'u_bright');
+  var res = program.createUniform('2f', 'u_resolution');
+  
+  var br = 0.0;
+  bright(br);
+  cut(0.999);
+  
+function render(){
+  webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+
+  // Tell WebGL how to convert from clip space to pixels
+  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+  // Tell it to use our program (pair of shaders)
+
+  
+
+  res(gl.canvas.width, gl.canvas.height);
+
+  // Bind the attribute/buffer set we want.
+  gl.bindVertexArray(vao);
+
+
+tm((Date.now() - start)/100000);
+  // draw 2 triangles
+  gl.drawArrays(
+      gl.TRIANGLES,
+      0,     // offset
+      6,     // num vertices to process
+  );
+  br += 0.0005;
+    bright(br);
+  requestAnimationFrame(render);
+}
+
+requestAnimationFrame(render);
+
+}
+
+
+
+const jsPsych = initJsPsych();
+var timeline = [];
+
+var enter_fullscreen = {
+  type: jsPsychFullscreen,
+  fullscreen_mode: true
+}
+timeline.push(enter_fullscreen);
+
+var trial_in_fullscreen = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: 'Press the space key whenever noise appears',
+  choices: ['Continue']
+}
+timeline.push(trial_in_fullscreen);
+
+var trial = {
+    type: jsPsychCanvasKeyboardResponse,
+    stimulus: snow,
+    choices: [' ']
+}
+timeline.push(trial);
+
+var trial2 = {
+    type: jsPsychCanvasKeyboardResponse,
+    stimulus: snow,
+    choices: [' ']
+}
+timeline.push(trial2);
+
+var trial3 = {
+    type: jsPsychCanvasKeyboardResponse,
+    stimulus: snow,
+    choices: [' ']
+}
+timeline.push(trial3);
+
+var exit_fullscreen = {
+  type: jsPsychFullscreen,
+  fullscreen_mode: false,
+  delay_after: 0
+}
+timeline.push(exit_fullscreen);
+
+jsPsych.run(timeline);
+
+</script>
+
+</body>
+
+</html>
