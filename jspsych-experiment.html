@@ -205,21 +205,30 @@ timeline.push(trial_in_fullscreen);
 var trial = {
     type: jsPsychCanvasKeyboardResponse,
     stimulus: snow,
-    choices: [' ']
+    choices: [' '],
+	  on_finish: function(data){
+	    data.brightness = br;
+	  }
 }
 timeline.push(trial);
 
 var trial2 = {
     type: jsPsychCanvasKeyboardResponse,
     stimulus: snow,
-    choices: [' ']
+    choices: [' '],
+    on_finish: function(data){
+	    data.brightness = br;
+	  }
 }
 timeline.push(trial2);
 
 var trial3 = {
     type: jsPsychCanvasKeyboardResponse,
     stimulus: snow,
-    choices: [' ']
+    choices: [' '],
+    on_finish: function(data){
+	    data.brightness = br;
+	  }
 }
 timeline.push(trial3);
 
