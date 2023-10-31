@@ -25,7 +25,9 @@ for webgl-utils, m3, m4, and webgl-lessons-ui.
 
 
 <script>
+
 var br = 0.0;
+var start = Date.now();
 
 "use strict";
 
@@ -72,6 +74,8 @@ float random(in vec3 pos) {
 
 }
 
+  
+
 float random(in vec4 pos) {
 
     float dot_product = dot(pos, vec4(12.9898,78.233,45.164,94.673));
@@ -83,7 +87,7 @@ float random(in vec4 pos) {
 	  vec4 color = vec4(vec3(0.0), 1.0);
       color += random(vec3(gl_FragCoord.xy / u_resolution * 5.0,u_time)); 
 	  //color = (color* step(u_cut,color) - u_cut)/(1.0-u_cut)*u_bright;
-	  color = step(u_cut,color)*(color - u_cut)/(1.0-u_cut)*u_bright;
+	  color = step(u_cut,color)*u_bright;
 	  outColor = vec4(color.xyz,1.0);
     }
   `;
@@ -129,7 +133,7 @@ float random(in vec4 pos) {
       0,          // start at the beginning of the buffer
   );
   
-  var start = Date.now();
+  
         program.createUniform = function (type, name) {
         var location = gl.getUniformLocation(program, name);
         return function (v1, v2, v3, v4) {
@@ -149,6 +153,8 @@ float random(in vec4 pos) {
   br = 0.0;
   bright(br);
   cut(0.999);
+  tm((Date.now()-start)/1000+15);
+  
   
 function render(){
   webglUtils.resizeCanvasToDisplaySize(gl.canvas);
@@ -166,14 +172,14 @@ function render(){
   gl.bindVertexArray(vao);
 
 
-tm((Date.now() - start)/100000);
+
   // draw 2 triangles
   gl.drawArrays(
       gl.TRIANGLES,
       0,     // offset
       6,     // num vertices to process
   );
-  br += 0.0005;
+  br += 0.00005;
     bright(br);
   requestAnimationFrame(render);
 }
@@ -197,7 +203,7 @@ timeline.push(enter_fullscreen);
 
 var trial_in_fullscreen = {
   type: jsPsychHtmlButtonResponse,
-  stimulus: 'Press the space key whenever noise appears',
+  stimulus: 'Press the space key whenever you can detect a starmap like pattern',
   choices: ['Continue']
 }
 timeline.push(trial_in_fullscreen);
@@ -205,7 +211,8 @@ timeline.push(trial_in_fullscreen);
 var trial = {
     type: jsPsychCanvasKeyboardResponse,
     stimulus: snow,
-    choices: [' ']
+    choices: [' '],
+	data: []
 }
 timeline.push(trial);
 
@@ -233,6 +240,7 @@ timeline.push(exit_fullscreen);
 jsPsych.data.addProperties({
   brightness: br,
 });
+
 jsPsych.run(timeline);
 
 
