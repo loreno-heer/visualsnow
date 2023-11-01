@@ -1,4 +1,4 @@
-# visualsnow
+# Visual Snow Simulator and Tools
 Programs to simulate the appearance of visual snow
 
 
